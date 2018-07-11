@@ -24,6 +24,8 @@ import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 
+import org.georgyorgy1.shinobu.util.CommandPermission;
+
 /**
  * <h1><b>Commands In JDA-Utilities</b></h1>
  * 
@@ -66,6 +68,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
  */
 public abstract class Command
 {
+    private CommandPermission permission = new CommandPermission();
     /**
      * The name of the command, allows the command to be called the format: {@code [prefix]<command name>}.
      */
@@ -224,6 +227,15 @@ public abstract class Command
         if(event.isFromType(ChannelType.TEXT) && !isAllowed(event.getTextChannel()))
         {
             terminate(event, "That command cannot be used in this channel!");
+            return;
+        }
+        
+        //channel check
+        boolean channelAllowed = permission.isChannelAllowed(event.getChannel());
+        
+        if (channelAllowed == false)
+        {
+            terminate(event, "Channel is blacklisted from using this command.");
             return;
         }
         
